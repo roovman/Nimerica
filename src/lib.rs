@@ -1,14 +1,16 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod tensor;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::tensor::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test_create_and_get() {
+        let t = Tensor::new([2, 2], vec![1, 2, 3, 4]);
+        assert_eq!(t.get(&[0,0]), Some(&1));
+        assert_eq!(t.get(&[1,1]), Some(&4));
+
     }
+
+
 }

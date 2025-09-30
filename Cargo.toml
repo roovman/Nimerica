@@ -1,6 +1,16 @@
 [package]
-name = "tensor_algebra"
+name = "nimerica"
 version = "0.1.0"
 edition = "2024"
+authors = ["Your Name <your@email.com>"]
+description = "A mini tensor algebra framework in Rust"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/roovman/Nimerica"
+documentation = "https://docs.rs/nimerica"
+readme = "README.md"
 
 [dependencies]
+# Big integers for arbitrary precision
+num-bigint = "0.4"
+# Traits like Zero, One, FromPrimitive
+num-traits = "0.2"
