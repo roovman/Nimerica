@@ -14,3 +14,7 @@ readme = "README.md"
 num-bigint = "0.4"
 # Traits like Zero, One, FromPrimitive
 num-traits = "0.2"
+
+tracing = "0.1"
+
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

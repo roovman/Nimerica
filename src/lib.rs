@@ -1,4 +1,9 @@
 pub mod tensor;
+pub mod utils;
+
+pub fn init() {
+    utils::logging::init_logging();
+}
 
 #[cfg(test)]
 mod tests {
