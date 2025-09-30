@@ -1,11 +1,9 @@
 use crate::traits::HasTensorCore;
-use crate::utils::logging::{debug, trace, error};
+use crate::utils::logging::{debug, trace, error, TensorError};
+use crate::{TensorView, TensorViewMut};
 
-/// Errors that can occur when constructing or using tensors.
-#[derive(Debug)]
-pub enum TensorError {
-    ShapeMismatch { expected: usize, got: usize },
-}
+
+
 
 /// Dense, owned tensor with fixed rank `R`.
 #[derive(Clone, Debug)]
@@ -52,15 +50,24 @@ impl<T, const R: usize> Tensor<T, R> {
         debug!("Tensor::defaulted dims={:?}, total elements={}", dims, total);
         let data = vec![T::default(); total];
 
-        // Safe unwrap: data length always matches
-        Self::new(dims, data).unwrap()
+        // Should always succeed, but be explicit
+        Self::new(dims, data).expect("Tensor::defaulted: invariant violated")
     }
+
 
     /// Return the underlying data buffer.
     pub fn into_inner(self) -> Vec<T> {
         trace!("Tensor::into_inner called, len={}", self.data.len());
         self.data
     }
+
+    pub fn view(&self) -> TensorView<'_, T, R> {
+        TensorView::new(self.dims, self.strides, &self.data)
+    }
+    pub fn view_mut(&mut self) -> TensorViewMut<'_, T, R> {
+        TensorViewMut::new(self.dims, self.strides, &mut self.data)
+    }
+
 }
 
 impl<T, const R: usize> HasTensorCore<T> for Tensor<T, R> {
@@ -84,3 +91,4 @@ impl<T, const R: usize> HasTensorCore<T> for Tensor<T, R> {
         &mut self.data
     }
 }
+

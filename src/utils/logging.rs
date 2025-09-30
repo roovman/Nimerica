@@ -1,28 +1,32 @@
 use std::sync::Once;
-use tracing_subscriber;
+use tracing_subscriber::{EnvFilter, fmt};
 
-/// Initialize logging system.
-///
-/// Debug build → default = DEBUG.  
-/// Release build → default = INFO.  
-/// Can be overridden with RUST_LOG.
 pub fn init_logging() {
     static INIT: Once = Once::new();
 
     INIT.call_once(|| {
-        let default_level = if cfg!(debug_assertions) {
-            "debug"
-        } else {
-            "info"
-        };
+        let filter = EnvFilter::try_from_default_env()
+            .unwrap_or_else(|_| {
+                if cfg!(debug_assertions) {
+                    EnvFilter::new("trace")   // default in debug
+                } else {
+                    EnvFilter::new("info")    // default in release
+                }
+            });
 
-        tracing_subscriber::fmt()
-            .with_env_filter(
-                tracing_subscriber::EnvFilter::from_default_env()
-                    .add_directive(default_level.parse().unwrap()),
-            )
+        fmt()
+            .with_env_filter(filter)
             .init();
     });
 }
+
+/// Errors that can occur when constructing or using tensors.
+#[derive(Debug)]
+pub enum TensorError {
+    ShapeMismatch { expected: usize, got: usize },
+    OutOfBounds { idx: Vec<usize>, dims: Vec<usize> },
+    NonContiguous,
+}
+
 
 pub use tracing::{info, debug, warn, error, trace};
